@@ -37,7 +37,12 @@ public class Wall : MonoBehaviour
         if (collider.TryGetComponent(out Player player))
         {
             float rimLeft = player.transform.position.x - 0.5f;
-            PlayerWallCollision(rimLeft);
+            int colLeft, colrRight;
+            BumpIn(rimLeft, out colLeft, out colrRight);
+
+            //выдать с какими столбцами пересечение
+            //сравнить их и вычесть наибольший
+
             player.HPdown();
         }
     }
@@ -58,17 +63,18 @@ public class Wall : MonoBehaviour
             _table[i, col].gameObject.SetActive(false);
         }
     }
-    float PlayerWallCollision(float rimLeft)
+    void BumpIn(float rimLeft, out int colLeft, out int colRight)
     {
-        if (rimLeft == -2.5) { return 1f; }
-        if (rimLeft > -2.5f && rimLeft < -1.5f) { return 1.5f; }
-        if (rimLeft == -1.5) { return 2f; }
-        if (rimLeft > -1.5f && rimLeft < -0.5f) { return 2.5f; }
-        if (rimLeft == -0.5) { return 3f; }
-        if (rimLeft > -0.5f && rimLeft < 0.5f) { return 3.5f; }
-        if (rimLeft == 0.5) { return 4f; }
-        if (rimLeft > 0.5f && rimLeft < 1.5f) { return 4.5f; }
-        if (rimLeft == 1.5f) { return 5f; }
-        return 0f;
+        colLeft = 0;
+        colRight = 0;
+        if (rimLeft == -2.5) { colLeft = 1; }
+        if (rimLeft > -2.5f && rimLeft < -1.5f) { colLeft = 1; colRight = 2; }
+        if (rimLeft == -1.5) { colLeft = 2; }
+        if (rimLeft > -1.5f && rimLeft < -0.5f) { colLeft = 2; colRight = 3; }
+        if (rimLeft == -0.5) { colLeft = 3; }
+        if (rimLeft > -0.5f && rimLeft < 0.5f) { colLeft = 3; colRight = 4; }
+        if (rimLeft == 0.5) { colLeft = 4; }
+        if (rimLeft > 0.5f && rimLeft < 1.5f) { colLeft = 4; colRight = 5; }
+        if (rimLeft == 1.5f) { colLeft = 5; }
     }
 }
