@@ -27,9 +27,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    internal void HPup()
+    public void HpUp(int HpConsume)
     {
-        HP++;
+        HP+= HpConsume;
     }
 
     internal void HPdown()
