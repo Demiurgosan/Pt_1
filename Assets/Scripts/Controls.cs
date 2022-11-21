@@ -4,24 +4,19 @@ using UnityEngine;
 
 public class Controls : MonoBehaviour
 {
-    public float Speed;
+    [SerializeField] private float _speed;
     public float WallDistance;
     private Vector3 _prevMousePos;
+    private float _tergetX;
 
     void Update()
     {
         if (Input.GetMouseButton(0))
         {
-            Vector3 delta = Input.mousePosition - _prevMousePos;
-            transform.position = new Vector3
-                (transform.position.x + delta.x * Speed, transform.position.y, transform.position.z);
+            _tergetX = transform.position.x + (Input.mousePosition - _prevMousePos).x * _speed;
+            var x = Mathf.Clamp(transform.position.x, -WallDistance, WallDistance);
+            transform.position = new Vector3(x, transform.position.y, transform.position.z);
         }
-
-        if (transform.position.x > WallDistance) transform.position = new Vector3
-                (WallDistance, transform.position.y, transform.position.z);
-        if (transform.position.x < -WallDistance) transform.position = new Vector3
-                (-WallDistance, transform.position.y, transform.position.z);
-
         _prevMousePos = Input.mousePosition;
     }
 }
