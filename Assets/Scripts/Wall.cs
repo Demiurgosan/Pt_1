@@ -5,76 +5,88 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    private Transform[,] _table = new Transform[10, 5];
-    private int[] _description = new int[5];
+    [SerializeField] private bool GizmoIsActive = true;
+    public GameObject BrickPrefab;
+    [SerializeField] private float BrickHeight;
+    [SerializeField] private float BrickWidth;
+    [SerializeField] private int[] ColumnsPeak = new int[5];
+    [SerializeField] private int[] RowsDenied = new int[5];
+    private bool[,] WallStructure;
+    //private int[] WallValues;
+    private GameObject[,] WallElements;
+
+    private void OnDrawGizmos()
+    {
+        if(GizmoIsActive == true) 
+        { 
+        Gizmos.color = Color.red;
+        for (int i = 0; i < ColumnsPeak.Length; i++)//columns
+        {
+            for (int j = 0; j < ColumnsPeak[i]; j++)//rows
+            {
+                    Gizmos.DrawCube(new Vector3(
+                        i * BrickWidth - (ColumnsPeak.Length / 2f - BrickWidth / 2), 
+                        j + BrickHeight / 2, 
+                        transform.position.z) , new Vector3(0.95f, 0.95f, 1));
+            }
+        }
+        }
+    }
 
     private void Start()
     {
-        Initialization();
-        Construct(4, 4, 3, 3, 3);
-    }
-    void Initialization()
-    {
-        int _counter = 0;
-        for(int i = 0; i < 10; i++)
+        int maxPeak = 0;
+        foreach (int i in ColumnsPeak) { maxPeak = Math.Max(maxPeak, i); }//compute posible maximum lenght of array's 2nd demention
+        GetComponent<BoxCollider>().size = new Vector3(ColumnsPeak.Length * BrickWidth, maxPeak * BrickHeight * 2, 1.1f);
+
+        WallStructure = new bool[ColumnsPeak.Length, maxPeak];//recording information about existing bricks
+        for (int i = 0; i < ColumnsPeak.Length; i++)//columns
         {
-            for(int j = 0; j < 5; j++)
+            for(int j = 0; j < ColumnsPeak[i]; j++)//rows
             {
-                _table[i, j] = GetComponentInChildren<Transform>().GetChild(_counter);
-                _counter++;
+                WallStructure[i, j] = true;
+            }
+        }
+
+        for(int i = 0; i < RowsDenied.Length; i++)
+        {
+            if (RowsDenied[i] != 0)
+            {
+                for(int j=0; j < WallStructure.GetUpperBound(0)+1; j++) { WallStructure[j, RowsDenied[i]-1] = false; }
+            }
+        }                                                      //complite recording information
+
+        /*WallValues = new int[ColumnsPeak.Length];//compute sum of existing bricks in columns
+        for(int i = 0; i < WallStructure.GetUpperBound(0)+1; i++)
+        {
+            for(int j = 0; j < WallStructure.GetUpperBound(1)+1; j++)
+            {
+                if(WallStructure[i, j] == true) { WallValues[i]++; }
+            }
+        }*/
+
+        WallElements = new GameObject[ColumnsPeak.Length, maxPeak];//creating brick wall on scene
+        for (int i = 0; i < ColumnsPeak.Length; i++)//columns
+        {
+            for (int j = 0; j < ColumnsPeak[i]; j++)//rows
+            {
+                if (WallStructure[i,j] == true) 
+                { 
+                    WallElements[i, j] = Instantiate(BrickPrefab, transform);
+                    WallElements[i, j].transform.position =
+                        new Vector3(i * BrickWidth - (ColumnsPeak.Length / 2f - BrickWidth / 2),
+                        j + BrickHeight / 2, 
+                        transform.position.z);
+                }
             }
         }
     }
 
     private void OnTriggerEnter(Collider collider)
     {
-        //вз€ть положение по ’ игрока, сравнить его с значени€ми описани€ стены с которыми он совпадает по ’
-        //использовать правый и левый край как переменные
-        //сравнить не €вл€етс€ один из краев больше другого, вычисл€ть по наибольшему, вычесть ’ѕ
-        //ограничить движение игрока в пределах попавихс€ столбцов
-        //подн€ть игрока на уровень стобца
-        //при выходе из стены выполнить падение освободить движение игрока
         if (collider.TryGetComponent(out Player player))
         {
-            float rimLeft = player.transform.position.x - 0.5f;
-            int colLeft, colrRight;
-            BumpIn(rimLeft, out colLeft, out colrRight);
-
-            //выдать с какими столбцами пересечение
-            //сравнить их и вычесть наибольший
-
-            player.HPdown();
+            
         }
-    }
-
-    void Construct(int col1, int col2, int col3, int col4, int col5)
-    {
-        int[] cols = { col1, col2, col3, col4, col5 };
-        for (int i = 0; i < 5; i++)
-        {
-            _description[i] = cols[i];
-            ConstructColomn(cols[i], i);
-        }
-    }
-    void ConstructColomn(int e, int col)
-    {
-        for (int i = e; i < 10; i++)
-        {
-            _table[i, col].gameObject.SetActive(false);
-        }
-    }
-    void BumpIn(float rimLeft, out int colLeft, out int colRight)
-    {
-        colLeft = 0;
-        colRight = 0;
-        if (rimLeft == -2.5) { colLeft = 1; }
-        if (rimLeft > -2.5f && rimLeft < -1.5f) { colLeft = 1; colRight = 2; }
-        if (rimLeft == -1.5) { colLeft = 2; }
-        if (rimLeft > -1.5f && rimLeft < -0.5f) { colLeft = 2; colRight = 3; }
-        if (rimLeft == -0.5) { colLeft = 3; }
-        if (rimLeft > -0.5f && rimLeft < 0.5f) { colLeft = 3; colRight = 4; }
-        if (rimLeft == 0.5) { colLeft = 4; }
-        if (rimLeft > 0.5f && rimLeft < 1.5f) { colLeft = 4; colRight = 5; }
-        if (rimLeft == 1.5f) { colLeft = 5; }
     }
 }
