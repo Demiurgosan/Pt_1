@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform Target;
-    public Vector3 Offset;
-    public Vector3 Rotation;
+    [SerializeField] private Transform _target;
+    [SerializeField] private Vector3 _offset;
+    [SerializeField] private Vector3 _rotation;
 
     void Update()
     {
-        transform.position = Offset;
-        //transform.rotation = Rotation;
+        transform.position = new Vector3(0, 0, _target.position.z) + _offset;
+        transform.rotation = Quaternion.Euler(_rotation);
     }
 }
