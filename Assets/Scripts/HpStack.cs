@@ -5,9 +5,9 @@ using UnityEngine;
 public class HpStack : MonoBehaviour
 {
     [Range(1, 10)]
-    public  int HpValue = 1;
-    public GameObject HpPrefab;
-    private List<GameObject> _cubesList = new List<GameObject>();// do i need <T> GameObject or Transform?
+    [SerializeField] private int HpValue = 1;
+    [SerializeField] private GameObject HpPrefab;
+    private List<GameObject> _cubesList = new List<GameObject>();
 
     private void OnDrawGizmos()
     {

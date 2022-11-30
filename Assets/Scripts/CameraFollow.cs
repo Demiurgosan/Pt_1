@@ -10,7 +10,7 @@ public class CameraFollow : MonoBehaviour
 
     void Update()
     {
-        transform.position = _offset;
+        transform.position = new Vector3(0, 0, _target.position.z) + _offset;
         transform.rotation = Quaternion.Euler(_rotation);
     }
 }
