@@ -77,29 +77,30 @@ public class Wall : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider collider)//must be problems if player be righter ther first point in WallPoints
+    private void OnTriggerEnter(Collider collider)//must be problems if player be more left then first point in WallPoints
     {
         if (collider.TryGetComponent(out Player player))
         {
             int bumpedColumn1 = 0;
             int bumpedColumn2 = 0;
-            foreach (int e in _wallPoints)
+            for(int e = 0; e < _wallPoints.Length; e++)
             {
-                if (player.transform.position.x == _wallPoints[e]) 
+                if (player.transform.position.x == _wallPoints[e])
                 { bumpedColumn1 = e; break; }
                 else if (player.transform.position.x < _wallPoints[e + 1])
                 { bumpedColumn1 = e; bumpedColumn2 = e + 1; break; }
             }
-
-            int deniedRowsCount = 0;
-            foreach(int e in _rowsDenied)
-            {
-                if (_rowsDenied[e] != 0) deniedRowsCount++;
-            }
-
-            int subtrahendHp = Mathf.Max(_columnsPeak[bumpedColumn1], _columnsPeak[bumpedColumn2]);
-            player.HpDown(subtrahendHp - deniedRowsCount);
+            int columnBumpedMax = Mathf.Max(_columnsPeak[bumpedColumn1], _columnsPeak[bumpedColumn2]);
+            player.Bumped(columnBumpedMax, _rowsDenied);
         }   
+    }
+
+    private void OnTriggerExit(Collider collider)
+    {
+        if (collider.TryGetComponent(out Player player))
+        {
+            player.IsFall = true;
+        }
     }
 
     //secondary functions

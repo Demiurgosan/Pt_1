@@ -5,39 +5,74 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int HP=4;
-    private int _lenghtofarray = 15;
-    private Transform[] PlayerCubes;
+    public GameObject CubePrefab;
+    public int HP=1;
+    private List<GameObject> _playerCubes = new List<GameObject>();
+    [HideInInspector] public bool IsFall = false;
+    public float FallingSpeed = 1;
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(new Vector3(transform.position.x, 0.5f, transform.position.z), new Vector3(1, 1, 1));
+    }
 
     private void Start()
     {
-        PlayerCubes = new Transform[_lenghtofarray];
-        for (int i = 0; i < _lenghtofarray; i++)
+        InstantiateCubes(HP);
+    }
+
+    private void Update()
+    {
+        if (IsFall)
         {
-            PlayerCubes[i] = GetComponentInChildren<Transform>().GetChild(i);
+            transform.position = new Vector3(transform.position.x, transform.position.y - FallingSpeed * Time.deltaTime, transform.position.z);
+            if(transform.position.y < 0)
+            {
+                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+                IsFall = false;
+            }
         }
     }
 
-    void Update()
+    public void Bumped(int columnBumpedMax, int[] _rowsDenied)
     {
-        for(int i = 0; i < _lenghtofarray; i++)
+        int deniedRowsCount = 0;
+        foreach (int e in _rowsDenied){
+            if (_rowsDenied[e] != 0) deniedRowsCount++;}
+        HpDown(columnBumpedMax - deniedRowsCount);
+
+        transform.position = new Vector3(transform.position.x, (float)columnBumpedMax, transform.position.z);
+    }
+
+    //secondary functions
+    public void HpUp(int hpConsume)
+    {
+        HP += hpConsume;
+        InstantiateCubes(hpConsume);
+    }
+
+    private void HpDown(int hpSubtrahend)
+    {
+        HP -= hpSubtrahend;
+        DestroyCubes(hpSubtrahend);
+    }
+    private void InstantiateCubes(int value)
+    {
+        int cubesCount = _playerCubes.Count;
+        for (int i = 0; i < value; i++)
         {
-            if (HP - 1 >= i) { PlayerCubes[i].gameObject.SetActive(true); }
-            if (HP - 1 < i) { PlayerCubes[i].gameObject.SetActive(false); }
+            _playerCubes.Add(Instantiate(CubePrefab, transform));
+            _playerCubes[i+cubesCount].transform.position = new Vector3(transform.position.x, i + 0.5f + cubesCount, transform.position.z);
         }
     }
 
-    public void HpUp(int HpConsume)
+    private void DestroyCubes(int value)
     {
-        HP+= HpConsume;
-    }
-
-    internal void HPdown()
-    {
-        HP--;
-    }
-    internal void HPcrush(int damage)
-    {
-       
+        for (int i = 0; i < value; i++)
+        {
+            Destroy(_playerCubes[_playerCubes.Count - 1]);
+            _playerCubes.RemoveAt(_playerCubes.Count-1);
+        }
     }
 }
