@@ -91,15 +91,15 @@ public class Wall : MonoBehaviour
                 { bumpedColumn1 = e; bumpedColumn2 = e + 1; break; }
             }
             int columnBumpedMax = Mathf.Max(_columnsPeak[bumpedColumn1], _columnsPeak[bumpedColumn2]);
-            player.Bumped(columnBumpedMax, _rowsDenied);
+            player.BumpedInWall(columnBumpedMax, _rowsDenied);
         }   
     }
 
     private void OnTriggerExit(Collider collider)
     {
-        if (collider.TryGetComponent(out Player player))
+        if (collider.TryGetComponent(out Controls controls))
         {
-            player.IsFall = true;
+            controls.IsFall = true;
         }
     }
 

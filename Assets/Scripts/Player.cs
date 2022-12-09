@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public GameObject CubePrefab;
-    public int HP=1;
+    [SerializeField] private Game Game;
+    [SerializeField] private GameObject CubePrefab;
+    [SerializeField] private int HP=1;
     private List<GameObject> _playerCubes = new List<GameObject>();
-    [HideInInspector] public bool IsFall = false;
-    public float FallingSpeed = 1;
+
 
     private void OnDrawGizmos()
     {
@@ -22,20 +22,7 @@ public class Player : MonoBehaviour
         InstantiateCubes(HP);
     }
 
-    private void Update()
-    {
-        if (IsFall)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y - FallingSpeed * Time.deltaTime, transform.position.z);
-            if(transform.position.y < 0)
-            {
-                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
-                IsFall = false;
-            }
-        }
-    }
-
-    public void Bumped(int columnBumpedMax, int[] _rowsDenied)
+    public void BumpedInWall(int columnBumpedMax, int[] _rowsDenied)
     {
         int deniedRowsCount = 0;
         foreach (int e in _rowsDenied){
@@ -43,6 +30,19 @@ public class Player : MonoBehaviour
         HpDown(columnBumpedMax - deniedRowsCount);
 
         transform.position = new Vector3(transform.position.x, (float)columnBumpedMax, transform.position.z);
+    }
+
+    public void BumpedInLava()
+    {
+        transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
+        GetComponent<Controls>().IsFall = true;
+        HpDown(1);
+    }
+
+    public void Finished()
+    {
+        GetComponent<Controls>().enabled = false;
+        Game.Win();
     }
 
     //secondary functions
@@ -54,8 +54,21 @@ public class Player : MonoBehaviour
 
     private void HpDown(int hpSubtrahend)
     {
-        HP -= hpSubtrahend;
-        DestroyCubes(hpSubtrahend);
+        if (HP - hpSubtrahend > 0)
+        {
+            HP -= hpSubtrahend;
+            DestroyCubes(hpSubtrahend);
+        }
+        else
+        {
+            GetComponent<Controls>().enabled = false;
+            for(int i = 0; i < _playerCubes.Count; i++)
+            {
+                Destroy(_playerCubes[i]);
+            }
+            Game.Lose();
+        }
+
     }
     private void InstantiateCubes(int value)
     {
@@ -75,4 +88,6 @@ public class Player : MonoBehaviour
             _playerCubes.RemoveAt(_playerCubes.Count-1);
         }
     }
+
+
 }

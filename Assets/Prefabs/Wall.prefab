@@ -45,12 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe15d32db7a5a14db941779e7e4a2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GizmoIsActive: 1
+  _gizmoIsActive: 1
   BrickPrefab: {fileID: 8964951363333690385, guid: 3f0c964a36f1e9047af9b4698239b136, type: 3}
-  BrickHeight: 1
-  BrickWidth: 1
-  ColumnsPeak: 0000000000000000000000000000000000000000
-  RowsDenied: 0000000000000000000000000000000000000000
+  _brickHeight: 1
+  _brickWidth: 1
+  _columnsPeak: 0000000000000000000000000000000000000000
+  _rowsDenied: 0000000000000000000000000000000000000000
 --- !u!65 &3928232738677427493
 BoxCollider:
   m_ObjectHideFlags: 0

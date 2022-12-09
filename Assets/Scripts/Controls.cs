@@ -10,6 +10,8 @@ public class Controls : MonoBehaviour
     [SerializeField] private float _forwardSpeed;
     private Vector3 _prevMousePos;
     private float _tergetX;
+    [HideInInspector] public bool IsFall = false;
+    public float FallingSpeed = 1;
 
     void Update()
     {
@@ -21,6 +23,16 @@ public class Controls : MonoBehaviour
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
         }
         _prevMousePos = Input.mousePosition;
+
+        if (IsFall)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y - FallingSpeed * Time.deltaTime, transform.position.z);
+            if (transform.position.y < 0)
+            {
+                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+                IsFall = false;
+            }
+        }
     }
 
     private void FixedUpdate()
