@@ -13,24 +13,8 @@ public class Wall : MonoBehaviour
     [SerializeField] private int[] _columnsPeak = new int[5];
     [SerializeField] private int[] _rowsDenied = new int[5];
     private bool[,] _wallStructure;
-    private float[] _wallPoints;
+    private float[] _wallPointsX;
     private GameObject[,] _wallElements;
-
-    private void OnDrawGizmos()
-    {
-        if (!_gizmoIsActive) return;
-        Gizmos.color = Color.red;
-        for (int i = 0; i < _columnsPeak.Length; i++)//columns
-        {
-            for (int j = 0; j < _columnsPeak[i]; j++)//rows
-            {
-                    Gizmos.DrawCube(new Vector3(
-                        i * _brickWidth - (_columnsPeak.Length / 2f - _brickWidth / 2), 
-                        j + _brickHeight / 2, 
-                        transform.position.z) , new Vector3(0.95f, 0.95f, 1));
-            }
-        }
-    }
 
     private void Start()
     {
@@ -54,10 +38,10 @@ public class Wall : MonoBehaviour
             }
         }                                                      //complite recording information
 
-        _wallPoints = new float[_columnsPeak.Length];//points for trigger compare with player.X
+        _wallPointsX = new float[_columnsPeak.Length];//points for trigger compare with player.X
         for (int i = 0; i < _columnsPeak.Length; i++)
         {
-            _wallPoints[i] = WallXCalculation(i);
+            _wallPointsX[i] = WallXCalculation(i);
         }
 
         _wallElements = new GameObject[_columnsPeak.Length, maxPeak];//creating brick wall on scene
@@ -81,32 +65,52 @@ public class Wall : MonoBehaviour
     {
         if (collider.TryGetComponent(out Player player))
         {
-            int bumpedColumn1 = 0;
-            int bumpedColumn2 = 0;
-            for(int e = 0; e < _wallPoints.Length; e++)
+            float playerCubeSize = player.CubeSize;
+            int bumpedColumnIndex1 = 0; 
+            int bumpedColumnIndex2 = 0;
+            for(int e = 0; e < _wallPointsX.Length - 1; e++)
             {
-                if (player.transform.position.x == _wallPoints[e])
-                { bumpedColumn1 = e; break; }
-                else if (player.transform.position.x < _wallPoints[e + 1])
-                { bumpedColumn1 = e; bumpedColumn2 = e + 1; break; }
+                if (player.transform.position.x == _wallPointsX[e])
+                { bumpedColumnIndex1 = e; break; }
+                else if (player.transform.position.x < _wallPointsX[e + 1])
+                { bumpedColumnIndex1 = e; bumpedColumnIndex2 = e + 1; break; }
             }
-            int columnBumpedMax = Mathf.Max(_columnsPeak[bumpedColumn1], _columnsPeak[bumpedColumn2]);
+            if (player.transform.position.x >= _wallPointsX[_wallPointsX.Length - 1])
+            {
+                bumpedColumnIndex1 = _wallPointsX.Length - 1;
+            }
+            int columnBumpedMax = Mathf.Max(_columnsPeak[bumpedColumnIndex1], _columnsPeak[bumpedColumnIndex2]);
             player.BumpedInWall(columnBumpedMax, _rowsDenied);
         }   
     }
 
     private void OnTriggerExit(Collider collider)
     {
-        if (collider.TryGetComponent(out Controls controls))
+        if (collider.TryGetComponent(out Player player))
         {
-            controls.IsFall = true;
+            player.IsFall = true;
         }
     }
 
     //secondary functions
     private float WallXCalculation(int index)
     {
-        float resolution = index * _brickWidth - (_columnsPeak.Length / 2f - _brickWidth / 2f);
+        float resolution = index * _brickWidth - ((_columnsPeak.Length - _brickWidth) / 2f);
         return resolution;
+    }
+    private void OnDrawGizmos()
+    {
+        if (!_gizmoIsActive) return;
+        Gizmos.color = Color.red;
+        for (int i = 0; i < _columnsPeak.Length; i++)//columns
+        {
+            for (int j = 0; j < _columnsPeak[i]; j++)//rows
+            {
+                Gizmos.DrawCube(new Vector3(
+                    i * _brickWidth - (_columnsPeak.Length / 2f - _brickWidth / 2),
+                    j + _brickHeight / 2,
+                    transform.position.z), new Vector3(0.95f, 0.95f, 1));
+            }
+        }
     }
 }

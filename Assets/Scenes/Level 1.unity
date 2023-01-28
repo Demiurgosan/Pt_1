@@ -243,7 +243,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b99bfdec29c3728408edf4e3db823b05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Game: {fileID: 589451086}
 --- !u!114 &189007508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,8 +288,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 189007507}
-        m_TargetAssemblyTypeName: UI_NextLvl, Assembly-CSharp
-        m_MethodName: OnBottonClick
+        m_TargetAssemblyTypeName: UINextLevel, Assembly-CSharp
+        m_MethodName: OnButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -585,7 +584,7 @@ MonoBehaviour:
   BorderDistance: 2
   MoveState: 0
   _sidewaysSpeed: 0.05
-  _forwardSpeed: 0.2
+  _forwardSpeed: 10
   IsFall: 0
   FallingSpeed: 7
 --- !u!65 &510329926
@@ -615,7 +614,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Game: {fileID: 589451086}
   CubePrefab: {fileID: 1306294660477710914, guid: ee326f9879be39344a87a2a50a45d135, type: 3}
+  CubeSize: 1
   HP: 5
+  IsFall: 0
 --- !u!54 &510329928
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -834,7 +835,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16807391a48ca4449981233dc3f75fa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _countOfLevels: 3
   _winWindow: {fileID: 520317425}
   _loseWindow: {fileID: 532826599}
 --- !u!1 &705507993
@@ -1924,8 +1924,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1496752988}
-        m_TargetAssemblyTypeName: UI_Restart, Assembly-CSharp
-        m_MethodName: OnBottonClick
+        m_TargetAssemblyTypeName: UIRestart, Assembly-CSharp
+        m_MethodName: OnButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

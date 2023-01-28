@@ -11,10 +11,17 @@ public class Controls : MonoBehaviour
     private Vector3 _prevMousePos;
     private float _tergetX;
     [HideInInspector] public bool IsFall = false;
-    public float FallingSpeed = 1;
+    [SerializeField] private float FallingSpeed = 1;
+    private Player _player;
+
+    private void Start()
+    {
+        _player = GetComponent<Player>();
+    }
 
     void Update()
     {
+        //movement in sideways
         if (Input.GetMouseButton(0) && !MoveState) { MoveState = true; }
         if (Input.GetMouseButton(0))
         {
@@ -24,23 +31,20 @@ public class Controls : MonoBehaviour
         }
         _prevMousePos = Input.mousePosition;
 
-        if (IsFall)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y - FallingSpeed * Time.deltaTime, transform.position.z);
-            if (transform.position.y < 0)
-            {
-                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
-                IsFall = false;
-            }
-        }
-    }
-
-    private void FixedUpdate()
-    {
+        //movement in forward
         if (MoveState)
         {
-            transform.position += new Vector3(0, 0, _forwardSpeed);
+            transform.position += new Vector3(0, 0, _forwardSpeed * Time.deltaTime);
         }
-        
+
+        if (_player.IsFall)
+        {
+            var targetY = transform.position.y - FallingSpeed * Time.deltaTime;
+            transform.position = new Vector3(transform.position.x, targetY, transform.position.z);
+            if (transform.position.y <= 0)
+            {
+                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+            }
+        }
     }
 }

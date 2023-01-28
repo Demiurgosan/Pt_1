@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class UI_NextLvl : MonoBehaviour
+public class UINextLevel : MonoBehaviour
 {
-    public void OnBottonClick()
+    public void OnButtonClick()
     {
         if(SceneManager.GetActiveScene().buildIndex == SceneManager.sceneCountInBuildSettings - 1)
         {

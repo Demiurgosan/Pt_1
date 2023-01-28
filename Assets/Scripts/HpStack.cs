@@ -9,15 +9,6 @@ public class HpStack : MonoBehaviour
     [SerializeField] private GameObject HpPrefab;
     private List<GameObject> _cubesList = new List<GameObject>();
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        for (int i = 0; i < HpValue; i++)
-        {
-            Gizmos.DrawCube(new Vector3(transform.position.x, i + 0.5f, transform.position.z), new Vector3(1, 1, 1));
-        }
-    }
-
     private void Start()
     {
         for(int i = 0; i < HpValue; i++)
@@ -34,6 +25,14 @@ public class HpStack : MonoBehaviour
         {
             player.HpUp(HpValue);
             transform.gameObject.SetActive(false);
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        for (int i = 0; i < HpValue; i++)
+        {
+            Gizmos.DrawCube(new Vector3(transform.position.x, i + 0.5f, transform.position.z), new Vector3(1, 1, 1));
         }
     }
 }

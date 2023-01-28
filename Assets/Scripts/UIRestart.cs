@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class UI_Restart : MonoBehaviour
+public class UIRestart : MonoBehaviour
 {
-    public void OnBottonClick()
+    public void OnButtonClick()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

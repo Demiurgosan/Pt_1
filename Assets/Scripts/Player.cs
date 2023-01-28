@@ -7,19 +7,19 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Game Game;
     [SerializeField] private GameObject CubePrefab;
+    //[SerializeField] private 
+    public float CubeSize = 1;
     [SerializeField] private int HP=1;
     private List<GameObject> _playerCubes = new List<GameObject>();
-
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(new Vector3(transform.position.x, 0.5f, transform.position.z), new Vector3(1, 1, 1));
-    }
+    [HideInInspector] public bool IsFall = false;
 
     private void Start()
     {
         InstantiateCubes(HP);
+    }
+    private void Update()
+    {
+        if(transform.position.y <= 0) IsFall = false;
     }
 
     public void BumpedInWall(int columnBumpedMax, int[] _rowsDenied)
@@ -29,13 +29,13 @@ public class Player : MonoBehaviour
             if (_rowsDenied[e] != 0) deniedRowsCount++;}
         HpDown(columnBumpedMax - deniedRowsCount);
 
-        transform.position = new Vector3(transform.position.x, (float)columnBumpedMax, transform.position.z);
+        transform.position = new Vector3(transform.position.x, columnBumpedMax, transform.position.z);
     }
 
     public void BumpedInLava()
     {
         transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
-        GetComponent<Controls>().IsFall = true;
+        IsFall = true;
         HpDown(1);
     }
 
@@ -51,7 +51,6 @@ public class Player : MonoBehaviour
         HP += hpConsume;
         InstantiateCubes(hpConsume);
     }
-
     private void HpDown(int hpSubtrahend)
     {
         if (HP - hpSubtrahend > 0)
@@ -73,13 +72,13 @@ public class Player : MonoBehaviour
     private void InstantiateCubes(int value)
     {
         int cubesCount = _playerCubes.Count;
+        float shiftByY = (0.5f + cubesCount) * CubeSize; ;
         for (int i = 0; i < value; i++)
         {
             _playerCubes.Add(Instantiate(CubePrefab, transform));
-            _playerCubes[i+cubesCount].transform.position = new Vector3(transform.position.x, i + 0.5f + cubesCount, transform.position.z);
+            _playerCubes[i+cubesCount].transform.position = new Vector3(transform.position.x, i + shiftByY, transform.position.z);
         }
     }
-
     private void DestroyCubes(int value)
     {
         for (int i = 0; i < value; i++)
@@ -88,6 +87,9 @@ public class Player : MonoBehaviour
             _playerCubes.RemoveAt(_playerCubes.Count-1);
         }
     }
-
-
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(new Vector3(transform.position.x, 0.5f, transform.position.z), new Vector3(1, 1, 1));
+    }
 }
