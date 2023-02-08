@@ -10,60 +10,45 @@ public class Wall : MonoBehaviour
     public GameObject BrickPrefab;
     [SerializeField] private float _brickHeight;
     [SerializeField] private float _brickWidth;
-    [SerializeField] private int[] _columnsPeak = new int[5];
-    [SerializeField] private int[] _rowsDenied = new int[5];
+    public int[] RowsDenied = new int[5];
+    public int[] ColumnsPeak = new int[5];
+    public float[] WallPointsX { get; private set; }
     private bool[,] _wallStructure;
-    private float[] _wallPoints;
     private GameObject[,] _wallElements;
-
-    private void OnDrawGizmos()
-    {
-        if (!_gizmoIsActive) return;
-        Gizmos.color = Color.red;
-        for (int i = 0; i < _columnsPeak.Length; i++)//columns
-        {
-            for (int j = 0; j < _columnsPeak[i]; j++)//rows
-            {
-                    Gizmos.DrawCube(new Vector3(
-                        i * _brickWidth - (_columnsPeak.Length / 2f - _brickWidth / 2), 
-                        j + _brickHeight / 2, 
-                        transform.position.z) , new Vector3(0.95f, 0.95f, 1));
-            }
-        }
-    }
 
     private void Start()
     {
-        int maxPeak = _columnsPeak.Max();
-        GetComponent<BoxCollider>().size = new Vector3(_columnsPeak.Length * _brickWidth, maxPeak * _brickHeight * 2, 1.1f);
 
-        _wallStructure = new bool[_columnsPeak.Length, maxPeak];//recording information about existing bricks
-        for (int i = 0; i < _columnsPeak.Length; i++)//columns
+        int maxPeak = ColumnsPeak.Max();
+        GetComponent<BoxCollider>().size = new Vector3(ColumnsPeak.Length * _brickWidth, maxPeak * _brickHeight * 2, 1.1f);
+        _wallStructure = new bool[ColumnsPeak.Length, maxPeak];//recording information about existing bricks
+
+        for (int i = 0; i < ColumnsPeak.Length; i++)//columns
         {
-            for(int j = 0; j < _columnsPeak[i]; j++)//rows
+            for(int j = 0; j < ColumnsPeak[i]; j++)//rows
             {
                 _wallStructure[i, j] = true;
             }
         }
 
-        for(int i = 0; i < _rowsDenied.Length; i++)
+        for(int i = 0; i < RowsDenied.Length; i++)
         {
-            if (_rowsDenied[i] != 0)
+            if (RowsDenied[i] != 0)
             {
-                for(int j=0; j < _wallStructure.GetUpperBound(0)+1; j++) { _wallStructure[j, _rowsDenied[i]-1] = false; }
+                for(int j=0; j < _wallStructure.GetUpperBound(0)+1; j++) { _wallStructure[j, RowsDenied[i]-1] = false; }
             }
         }                                                      //complite recording information
 
-        _wallPoints = new float[_columnsPeak.Length];//points for trigger compare with player.X
-        for (int i = 0; i < _columnsPeak.Length; i++)
+        WallPointsX = new float[ColumnsPeak.Length];//points for trigger compare with player.X
+        for (int i = 0; i < ColumnsPeak.Length; i++)
         {
-            _wallPoints[i] = WallXCalculation(i);
+            WallPointsX[i] = WallXCalculation(i);
         }
 
-        _wallElements = new GameObject[_columnsPeak.Length, maxPeak];//creating brick wall on scene
-        for (int i = 0; i < _columnsPeak.Length; i++)//columns
+        _wallElements = new GameObject[ColumnsPeak.Length, maxPeak];//creating brick wall on scene
+        for (int i = 0; i < ColumnsPeak.Length; i++)//columns
         {
-            for (int j = 0; j < _columnsPeak[i]; j++)//rows
+            for (int j = 0; j < ColumnsPeak[i]; j++)//rows
             {
                 if (_wallStructure[i,j] == true) 
                 { 
@@ -77,35 +62,25 @@ public class Wall : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider collider)//must be problems if player be righter ther first point in WallPoints
-    {
-        if (collider.TryGetComponent(out Player player))
-        {
-            int bumpedColumn1 = 0;
-            int bumpedColumn2 = 0;
-            foreach (int e in _wallPoints)
-            {
-                if (player.transform.position.x == _wallPoints[e]) 
-                { bumpedColumn1 = e; break; }
-                else if (player.transform.position.x < _wallPoints[e + 1])
-                { bumpedColumn1 = e; bumpedColumn2 = e + 1; break; }
-            }
-
-            int deniedRowsCount = 0;
-            foreach(int e in _rowsDenied)
-            {
-                if (_rowsDenied[e] != 0) deniedRowsCount++;
-            }
-
-            int subtrahendHp = Mathf.Max(_columnsPeak[bumpedColumn1], _columnsPeak[bumpedColumn2]);
-            player.HpDown(subtrahendHp - deniedRowsCount);
-        }   
-    }
-
-    //secondary functions
+    //SECONDARY FUNCTIONS
     private float WallXCalculation(int index)
     {
-        float resolution = index * _brickWidth - (_columnsPeak.Length / 2f - _brickWidth / 2f);
+        float resolution = index * _brickWidth - ((ColumnsPeak.Length - _brickWidth) / 2f);
         return resolution;
+    }
+    private void OnDrawGizmos()
+    {
+        if (!_gizmoIsActive) return;
+        Gizmos.color = Color.red;
+        for (int i = 0; i < ColumnsPeak.Length; i++)//columns
+        {
+            for (int j = 0; j < ColumnsPeak[i]; j++)//rows
+            {
+                Gizmos.DrawCube(new Vector3(
+                    i * _brickWidth - (ColumnsPeak.Length / 2f - _brickWidth / 2),
+                    j + _brickHeight / 2,
+                    transform.position.z), new Vector3(0.95f, 0.95f, 1));
+            }
+        }
     }
 }
