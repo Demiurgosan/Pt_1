@@ -5,7 +5,7 @@ using UnityEngine;
 public class HpStack : MonoBehaviour
 {
     [Range(1, 10)]
-    [SerializeField] private int HpValue = 1;
+    public int HpValue = 1;
     [SerializeField] private GameObject HpPrefab;
     private List<GameObject> _cubesList = new List<GameObject>();
 
@@ -23,7 +23,6 @@ public class HpStack : MonoBehaviour
     {
         if (collider.TryGetComponent(out Player player))
         {
-            player.HpUp(HpValue);
             transform.gameObject.SetActive(false);
         }
     }

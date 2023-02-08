@@ -4,11 +4,5 @@ using UnityEngine;
 
 public class Lava : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider collider)
-    {
-        if (collider.TryGetComponent(out Player player))
-        {
-            player.BumpedInLava();
-        }
-    }
+    //null
 }

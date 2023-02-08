@@ -5,12 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class UINextLevel : MonoBehaviour
 {
+    [SerializeField] private Game _game;
     public void OnButtonClick()
     {
-        if(SceneManager.GetActiveScene().buildIndex == SceneManager.sceneCountInBuildSettings - 1)
-        {
-            SceneManager.LoadScene(0);
-        }
-        else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        _game.NextLevel();
     }
 }

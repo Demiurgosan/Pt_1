@@ -5,8 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class UIRestart : MonoBehaviour
 {
+    [SerializeField] private Game _game;
     public void OnButtonClick()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        _game.Restart();
     }
 }
